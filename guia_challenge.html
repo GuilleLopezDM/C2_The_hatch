@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Guía de estudio del challenge The Hatch C2: regresión, clasificación, preparación de datos, validación y métricas.">
+  <title>The Hatch C2 · Guía de estudio</title>
+  <style>
+    :root { --paper:#f5f4ee; --white:#fff; --ink:#172d35; --muted:#536871; --line:#d9e0dc; --green:#116856; --lime:#d9edba; --orange:#a44124; --soft:#eef4f0; --nav:260px; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; scroll-padding-top:24px; }
+    body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.75 system-ui,-apple-system,"Segoe UI",sans-serif; }
+    a { color:var(--green); text-underline-offset:3px; }
+    button,input { font:inherit; }
+    button { cursor:pointer; }
+    button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible { outline:3px solid #c87323; outline-offset:4px; }
+    .skip { position:absolute; top:-80px; left:20px; background:white; padding:10px; z-index:10; }
+    .skip:focus { top:10px; }
+    aside { position:fixed; inset:0 auto 0 0; width:var(--nav); padding:30px 22px; background:var(--ink); color:#e6ede9; overflow-y:auto; }
+    .brand { font-size:20px; font-weight:800; letter-spacing:-.5px; }
+    .brand span { color:var(--lime); }
+    .eyebrow { font-size:12px; text-transform:uppercase; letter-spacing:2px; font-weight:750; }
+    aside p { color:#b7cacb; font-size:13px; margin:6px 0 24px; }
+    nav a { display:block; color:#d5e2e2; text-decoration:none; font-size:13px; padding:6px 10px; margin:2px 0; border-radius:6px; }
+    nav a:hover,nav a.active { background:#2a454b; color:#fff; }
+    .nav-label { color:#a9c0be; font-size:10px; letter-spacing:1.5px; margin:24px 10px 7px; text-transform:uppercase; }
+    .progress-wrap { margin-top:28px; border-top:1px solid #456066; padding-top:18px; }
+    progress { width:100%; height:7px; accent-color:var(--lime); }
+    #progress-text { display:block; font-size:12px; color:#d5e2e2; }
+    main { margin-left:var(--nav); max-width:1450px; padding:48px clamp(24px,5vw,88px) 60px; }
+    header { padding:22px 0 38px; }
+    .pill { display:inline-block; background:var(--lime); color:#284627; font-size:11px; padding:4px 11px; border-radius:30px; font-weight:800; letter-spacing:1px; }
+    h1 { font-size:clamp(40px,5vw,68px); line-height:1.06; letter-spacing:-2.6px; margin:24px 0; max-width:860px; }
+    h1 em { color:var(--green); font-style:normal; }
+    .intro { font-size:19px; color:var(--muted); max-width:760px; }
+    .actions { display:flex; gap:12px; flex-wrap:wrap; margin:26px 0; }
+    .button { border:1px solid var(--line); border-radius:8px; padding:9px 16px; background:white; color:var(--ink); text-decoration:none; font-size:14px; font-weight:650; }
+    .button.primary { color:#fff; background:var(--green); border-color:var(--green); }
+    .meta { display:flex; gap:12px 25px; flex-wrap:wrap; font-size:12px; color:var(--muted); }
+    .mission-grid,.cols { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; }
+    .mission { padding:25px; border-radius:14px; background:var(--ink); color:#fff; }
+    .mission:nth-child(2) { background:var(--green); }
+    .mission .eyebrow { color:#c9ddb7; }
+    .mission h2 { margin:8px 0 12px; font-size:25px; }
+    .mission p { font-size:14px; margin:0; color:#e4eeea; }
+    section { margin-top:30px; padding:30px; background:var(--white); border:1px solid var(--line); border-radius:14px; }
+    .section-top { display:flex; align-items:center; gap:15px; border-bottom:1px solid var(--line); padding-bottom:18px; margin-bottom:24px; }
+    .number { display:grid; place-items:center; min-width:42px; height:42px; border:1px solid #c3d6c9; color:var(--green); border-radius:50%; font-size:13px; font-weight:800; }
+    h2 { font-size:27px; line-height:1.25; letter-spacing:-.7px; margin:0; }
+    h3 { font-size:18px; line-height:1.4; margin:28px 0 10px; }
+    p { margin:12px 0; }
+    li { margin:7px 0; }
+    strong { font-weight:730; }
+    .lead { font-size:18px; }
+    .card { background:var(--soft); padding:20px; border-radius:10px; margin:12px 0; }
+    .card h3 { margin:0 0 8px; }
+    .note { border-left:3px solid var(--green); background:#f1f6f0; padding:14px 18px; margin:20px 0; font-size:14px; }
+    .note.warn { border-color:var(--orange); background:#fcf2e9; }
+    .formula { background:#172d35; color:#eef4ed; padding:18px 22px; border-radius:9px; margin:16px 0; font:16px/1.8 "Cambria Math",Georgia,serif; overflow-x:auto; }
+    .formula small { display:block; color:#bfd4d0; font:12px/1.65 system-ui,sans-serif; margin-top:8px; }
+    code { font: .87em/1.6 Consolas,"Courier New",monospace; background:#edf1ee; padding:2px 5px; border-radius:4px; overflow-wrap:anywhere; }
+    pre { background:#132b33; color:#e5efec; padding:20px; border-radius:9px; overflow:auto; font:13px/1.8 Consolas,monospace; }
+    pre code { background:none; padding:0; color:inherit; font:inherit; overflow-wrap:normal; }
+    .comment { color:#abd0b4; }
+    .table-wrap { overflow-x:auto; margin:18px 0; }
+    table { width:100%; border-collapse:collapse; font-size:14px; }
+    th { text-align:left; background:#edf3ef; font-size:12px; }
+    th,td { padding:12px 14px; border-bottom:1px solid var(--line); vertical-align:top; }
+    .small { font-size:13px; color:var(--muted); }
+    .flow { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:20px 0; font-size:13px; }
+    .flow b { background:#edf4e9; border:1px solid #cedcc8; padding:10px 13px; border-radius:6px; }
+    .flow span { color:var(--green); }
+    .split { display:flex; border-radius:8px; overflow:hidden; margin:20px 0; font-size:13px; font-weight:700; }
+    .split div { padding:15px; }
+    .split .train { width:80%; background:var(--green); color:#fff; }
+    .split .test { width:20%; background:var(--lime); min-width:80px; }
+    .folds { display:grid; grid-template-columns:repeat(5,1fr); gap:5px; margin:16px 0; }
+    .folds span { background:#eaf0ec; border-radius:4px; text-align:center; padding:5px; font-size:11px; }
+    .folds .valid { background:var(--lime); color:#24451f; font-weight:700; }
+    details { border:1px solid var(--line); border-radius:8px; padding:12px 16px; margin:12px 0; }
+    summary { cursor:pointer; font-weight:650; }
+    details p:last-child { margin-bottom:2px; }
+    .done { display:flex; align-items:center; gap:10px; margin-top:28px; padding-top:18px; border-top:1px solid var(--line); color:var(--green); font-size:13px; cursor:pointer; }
+    .done input { width:17px; height:17px; accent-color:var(--green); }
+    .lab { border:1px solid #cadcce; background:#f5f9f3; border-radius:12px; padding:22px; margin:24px 0; }
+    .lab h3 { margin-top:0; }
+    .input-row { display:flex; flex-wrap:wrap; gap:14px; }
+    .input-row label { flex:1; min-width:140px; font-size:13px; font-weight:650; }
+    input[type=text],input[type=number] { display:block; width:100%; border:1px solid #9eb7a7; border-radius:6px; padding:8px 10px; background:#fff; color:var(--ink); margin-top:5px; }
+    input[type=range] { width:100%; accent-color:var(--green); }
+    .stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-top:18px; }
+    .stat { background:white; padding:12px; border-radius:7px; border:1px solid var(--line); }
+    .stat b { display:block; font-size:22px; color:var(--green); }
+    .stat span { color:var(--muted); font-size:11px; }
+    .bar { height:12px; border-radius:20px; background:#dce6dd; overflow:hidden; margin:10px 0; }
+    .bar span { display:block; height:100%; background:var(--green); transition:width .15s; }
+    .error { color:#a22b1c; font-size:13px; }
+    .quiz-question { border-bottom:1px solid var(--line); padding:20px 0; margin:0; min-width:0; border-left:0; border-right:0; border-top:0; }
+    .quiz-question legend { font-weight:700; padding:0; float:left; width:100%; margin-bottom:10px; }
+    .quiz-question .options { clear:both; }
+    .option { display:flex; gap:10px; align-items:baseline; padding:8px 12px; border:1px solid var(--line); border-radius:7px; margin:7px 0; cursor:pointer; font-size:14px; }
+    .option:has(input:checked) { border-color:var(--green); background:#eef6e9; }
+    .feedback { margin:10px 0; font-size:14px; padding:12px; border-radius:6px; background:#f4f5f0; }
+    .feedback.good { background:#eaf5e6; color:#215b31; }
+    .feedback.bad { background:#fcf0e7; color:#823b1f; }
+    #quiz-result { font-weight:750; font-size:18px; }
+    footer { padding:28px 4px 0; color:var(--muted); font-size:12px; }
+    [hidden] { display:none!important; }
+    @media (min-width:1500px) { main { margin-right:auto; } }
+    @media (max-width:1050px) { :root { --nav:220px; } main { padding:28px; } section { padding:24px; } h1 { font-size:48px; } .stats { grid-template-columns:repeat(2,1fr); } }
+    @media (max-width:760px) { aside { position:static; width:auto; padding:18px 22px; } aside nav { display:flex; overflow-x:auto; gap:5px; padding:10px 0 0; } nav a { white-space:nowrap; } .nav-label,aside p,.progress-wrap { display:none; } main { margin:0; padding:22px 16px 35px; } header { padding-top:5px; } h1 { font-size:44px; letter-spacing:-1.8px; } .mission-grid,.cols { grid-template-columns:1fr; } section { padding:22px 18px; } h2 { font-size:23px; } .intro { font-size:17px; } .section-top { gap:10px; } th,td { padding:10px; } }
+    @media print { @page { margin:15mm; } body { background:#fff; color:#000; font-size:10pt; } aside,.actions,.done,.quiz-controls,.lab input,.skip { display:none!important; } main { margin:0; padding:0; max-width:none; } header { padding:0; } h1 { font-size:32pt; } section { border:0; border-top:1px solid #aaa; border-radius:0; padding:20px 0; margin-top:14px; } h2,h3,.section-top { break-after:avoid; } table,.card,.formula,.lab { break-inside:avoid; } .mission,.formula,pre { background:#f1f1f1; color:#000; } .mission p,.mission .eyebrow,.formula small { color:#333; } .option { padding:4px; } a { color:inherit; } .small { color:#333; } }
+    @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } * { transition:none!important; } }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#contenido">Saltar al contenido</a>
+  <aside aria-label="Índice de estudio">
+    <div class="brand">THE HATCH <span>/ C2</span></div>
+    <p>Tu cuaderno de conceptos.<br>Leer, entender, explicar, practicar.</p>
+    <nav aria-label="Secciones">
+      <div class="nav-label">Preparar el terreno</div>
+      <a href="#mapa">01 · El mapa del challenge</a>
+      <a href="#datos">02 · Conocer los datos</a>
+      <a href="#eda">03 · EDA y calidad</a>
+      <a href="#split">04 · Train, validación y test</a>
+      <a href="#preparacion">05 · Preparación y Pipeline</a>
+      <div class="nav-label">Predecir y evaluar</div>
+      <a href="#lineal">06 · Regresión lineal</a>
+      <a href="#metricas-reg">07 · RMSE, MAE y R²</a>
+      <a href="#regularizacion">08 · Ridge, Lasso y ajuste</a>
+      <a href="#cv">09 · CV y búsqueda</a>
+      <a href="#logistica">10 · Regresión logística</a>
+      <a href="#clasificacion">11 · Matriz y métricas</a>
+      <div class="nav-label">Defender tu trabajo</div>
+      <a href="#resultados">12 · Tus resultados</a>
+      <a href="#codigo">13 · Leer el código</a>
+      <a href="#defensa">14 · Explicar y concluir</a>
+      <a href="#repaso">15 · Autoevaluación</a>
+      <a href="#fuentes">16 · Hoja rápida y fuentes</a>
+    </nav>
+    <div class="progress-wrap">
+      <span id="progress-text">0 de 14 temas comprendidos</span>
+      <progress id="progress" max="14" value="0" aria-label="Progreso de estudio"></progress>
+    </div>
+  </aside>
+
+  <main id="contenido">
+    <header>
+      <span class="pill">GUÍA DE ESTUDIO · APRENDIZAJE SUPERVISADO</span>
+      <h1>Del código a<br><em>entender lo que hacés.</em></h1>
+      <p class="intro">Todos los conceptos para resolver y explicar tu challenge de regresión y clasificación. Conectados con las variables, las decisiones y los resultados de tu notebook.</p>
+      <div class="actions">
+        <a class="button primary" href="#mapa">Empezar a estudiar ↓</a>
+        <a class="button" href="#repaso">Ir al cuestionario</a>
+        <button class="button" id="print" type="button">Imprimir / guardar PDF</button>
+      </div>
+      <div class="meta"><span>16 secciones · 3 laboratorios · 12 preguntas</span><span>Un archivo · funciona sin conexión</span><span>Basado en notebooks/challenge.ipynb</span></div>
+    </header>
+
+    <div class="mission-grid">
+      <article class="mission"><div class="eyebrow">Misión 01 / Housing</div><h2>¿Cuánto vale?</h2><p>Predecir el valor mediano de viviendas de una zona censal. Objetivo numérico → regresión → evaluar errores en dinero.</p></article>
+      <article class="mission"><div class="eyebrow">Misión 02 / Churn</div><h2>¿Se queda o se va?</h2><p>Clasificar clientes según su baja. Objetivo binario → clasificación → evaluar aciertos, bajas omitidas y falsas alertas.</p></article>
+    </div>
+
+    <section id="mapa" data-study>
+      <div class="section-top"><span class="number">01</span><h2>El mapa del challenge</h2></div>
+      <p class="lead"><strong>Aprendizaje supervisado</strong> significa aprender una relación entre entradas y una respuesta conocida a partir de ejemplos.</p>
+      <div class="table-wrap"><table><thead><tr><th>Concepto</th><th>Qué significa</th><th>En tu challenge</th></tr></thead><tbody>
+        <tr><td>Observación / muestra</td><td>Una fila de datos.</td><td>Una zona censal o un cliente.</td></tr>
+        <tr><td>Variable predictora / feature</td><td>Una entrada que el modelo utiliza para predecir.</td><td>Ingreso, ubicación, antigüedad, contrato.</td></tr>
+        <tr><td><code>X</code></td><td>Tabla de variables predictoras: filas × columnas.</td><td><code>Xh</code> para Housing; <code>Xc</code> para Churn.</td></tr>
+        <tr><td>Objetivo / target / <code>y</code></td><td>Respuesta que queremos aprender a predecir.</td><td><code>median_house_value</code> o <code>Churn</code>.</td></tr>
+        <tr><td>Modelo</td><td>Regla con parámetros aprendidos de los datos.</td><td>Regresión lineal, Ridge, Lasso o logística.</td></tr>
+        <tr><td>Entrenamiento</td><td>Ajustar los parámetros con ejemplos conocidos.</td><td><code>fit(X_train, y_train)</code>.</td></tr>
+        <tr><td>Predicción / ŷ</td><td>Respuesta estimada para una entrada.</td><td><code>predict(X_test)</code>.</td></tr>
+        <tr><td>Generalización</td><td>Funcionar en observaciones que no se usaron para aprender.</td><td>Rendir bien fuera de train.</td></tr>
+      </tbody></table></div>
+      <div class="flow" aria-label="Proceso de modelado"><b>Entender los datos</b><span>→</span><b>Separar test</b><span>→</span><b>Preparar + entrenar con CV</b><span>→</span><b>Evaluar</b><span>→</span><b>Interpretar</b></div>
+      <p><strong>Regresión:</strong> devuelve una cantidad numérica. <strong>Clasificación:</strong> decide una categoría, a menudo a partir de una probabilidad estimada. Aunque se llame “regresión logística”, en este ejercicio se usa para clasificar.</p>
+      <div class="note">Objetivo de estudio: poder explicar qué predecís, con qué información, cómo elegís el modelo y cómo sabés si sirve.</div>
+    </section>
+
+    <section id="datos" data-study>
+      <div class="section-top"><span class="number">02</span><h2>Conocer los datos antes de modelar</h2></div>
+      <h3>Housing: una zona, no una vivienda individual</h3>
+      <p>El CSV local tiene <strong>20.640 filas y 10 columnas</strong>. El objetivo es <code>median_house_value</code>, el valor mediano de viviendas de la zona en <strong>USD de 1990</strong>. El notebook utiliza las otras nueve columnas como predictores.</p>
+      <div class="table-wrap"><table><thead><tr><th>Variables</th><th>Significado</th><th>Precaución</th></tr></thead><tbody>
+        <tr><td><code>longitude</code>, <code>latitude</code></td><td>Ubicación geográfica.</td><td>La cercanía entre zonas puede hacer optimista una división aleatoria.</td></tr>
+        <tr><td><code>housing_median_age</code></td><td>Antigüedad mediana de las viviendas.</td><td>La mediana es el valor central, no el promedio.</td></tr>
+        <tr><td><code>total_rooms</code>, <code>total_bedrooms</code></td><td>Totales de habitaciones y dormitorios de la zona.</td><td>No son habitaciones por casa; hay dormitorios faltantes.</td></tr>
+        <tr><td><code>population</code>, <code>households</code></td><td>Población y número de hogares.</td><td>Variables relacionadas pueden aportar información redundante.</td></tr>
+        <tr><td><code>median_income</code></td><td>Ingreso mediano en la escala del dataset.</td><td>Una unidad no debe interpretarse como un dólar; además se estandariza.</td></tr>
+        <tr><td><code>ocean_proximity</code></td><td>Categoría de proximidad al océano.</td><td>Necesita codificación categórica.</td></tr>
+      </tbody></table></div>
+      <h3>Churn: una fila por cliente</h3>
+      <p>El CSV tiene <strong>7.043 clientes y 21 columnas</strong>. Se seleccionan nueve predictores: <code>tenure</code> (antigüedad), <code>MonthlyCharges</code>, <code>TotalCharges</code>, <code>Contract</code>, <code>InternetService</code>, <code>OnlineSecurity</code>, <code>TechSupport</code>, <code>PaymentMethod</code> y <code>PaperlessBilling</code>.</p>
+      <p>Se excluye <code>customerID</code>, un identificador. El objetivo se transforma con <code>{'No': 0, 'Yes': 1}</code>: <strong>irse es la clase positiva</strong>. “Positiva” es una convención matemática, no una valoración favorable.</p>
+      <div class="note warn">Hay 5.174 clientes sin baja y 1.869 con baja: aproximadamente 73,5 % frente a 26,5 %. Este <strong>desbalance de clases</strong> permite obtener una accuracy alta sin detectar ninguna baja.</div>
+    </section>
+
+    <section id="eda" data-study>
+      <div class="section-top"><span class="number">03</span><h2>EDA y calidad de los datos</h2></div>
+      <p>El <strong>análisis exploratorio de datos (EDA)</strong> permite entender distribuciones, relaciones, faltantes y posibles errores antes de elegir cómo modelar.</p>
+      <div class="cols">
+        <div class="card"><h3>Distribución y valores atípicos</h3><p>La distribución describe cómo se reparten los valores. Un histograma muestra concentración, asimetría y extremos. Un <strong>outlier</strong> es un valor inusual: puede ser real y no se elimina automáticamente.</p></div>
+        <div class="card"><h3>Media, mediana y moda</h3><p><strong>Media:</strong> suma dividida por cantidad. <strong>Mediana:</strong> valor central al ordenar. <strong>Moda:</strong> valor más frecuente. La mediana resiste mejor valores extremos que la media.</p></div>
+        <div class="card"><h3>Faltantes y tipos</h3><p><code>NaN</code> representa datos ausentes. Housing tiene 207 faltantes en dormitorios. En Churn, convertir <code>TotalCharges</code> con <code>errors='coerce'</code> deja 11 valores faltantes. Un número guardado como texto necesita conversión.</p></div>
+        <div class="card"><h3>Correlación y redundancia</h3><p>La correlación de Pearson mide asociación lineal entre −1 y 1. Cerca de cero no descarta relaciones no lineales. La correlación ingreso/precio en train es ≈ 0,691. <strong>Asociación no demuestra causalidad.</strong></p></div>
+      </div>
+      <p><strong>Duplicados:</strong> filas repetidas pueden distorsionar el análisis y, si cruzan train y test, facilitar una evaluación demasiado optimista. Housing reporta cero filas duplicadas. Churn comprueba que cada identificador sea único.</p>
+      <p><strong>Tope del objetivo:</strong> Housing tiene 965 zonas en el máximo de USD 500.001. El valor observado está limitado y no informa cuánto valdrían esas zonas por encima del límite. No podemos recuperar esos precios reales solo con el CSV.</p>
+      <div class="note">El notebook conserva todas las filas. Limpiar no significa borrar todo lo extraño: cada exclusión cambia la población que el modelo aprende a representar.</div>
+    </section>
+
+    <section id="split" data-study>
+      <div class="section-top"><span class="number">04</span><h2>Train, validación y test</h2></div>
+      <div class="split"><div class="train">80 % · entrenamiento y validación cruzada</div><div class="test">20 % · test</div></div>
+      <ul>
+        <li><strong>Train:</strong> sirve para aprender parámetros y, mediante validación interna, elegir configuraciones.</li>
+        <li><strong>Validación:</strong> sirve para comparar alternativas sin consultar el test. En tu notebook se hace mediante folds dentro de train.</li>
+        <li><strong>Test:</strong> estima el rendimiento final del modelo ya elegido sobre datos reservados.</li>
+      </ul>
+      <p><code>test_size=.2</code> reserva el 20 %. <code>random_state=42</code> hace reproducible esa división con los mismos datos y condiciones; el 42 no tiene una propiedad especial. <code>stratify=yc</code> conserva aproximadamente la proporción de clases en Churn.</p>
+      <div class="table-wrap"><table><thead><tr><th>Dataset</th><th>Train</th><th>Test</th><th>Tipo de división</th></tr></thead><tbody><tr><td>Housing</td><td>16.512</td><td>4.128</td><td>Aleatoria</td></tr><tr><td>Churn</td><td>5.634</td><td>1.409</td><td>Aleatoria estratificada</td></tr></tbody></table></div>
+      <h3>Fuga de información / data leakage</h3>
+      <p>Ocurre cuando el entrenamiento o las decisiones del modelado usan información que debería permanecer fuera de su alcance. Ejemplos: calcular la mediana de imputación con todo el dataset, elegir variables mirando el test, incluir la respuesta en <code>X</code> o usar datos que solo existirían después del momento de predicción.</p>
+      <div class="note warn"><strong>Regla para recordar:</strong> las transformaciones que aprenden de los datos se ajustan solo con train. En CV se ajustan solo con la parte de entrenamiento de cada fold. El test se transforma con lo ya aprendido.</div>
+      <p>Una división aleatoria supone que la mezcla de observaciones representa el uso esperado. Para predecir en otra época o región puede necesitarse validación temporal o geográfica. Una semilla fija facilita repetir un resultado; no elimina el sesgo de evaluación.</p>
+    </section>
+
+    <section id="preparacion" data-study>
+      <div class="section-top"><span class="number">05</span><h2>Preparación de datos y Pipeline</h2></div>
+      <h3>Ruta numérica: imputar y estandarizar</h3>
+      <p><code>SimpleImputer(strategy='median')</code> completa faltantes con la mediana aprendida en train. <code>StandardScaler()</code> centra y escala cada variable usando la media y la desviación estándar aprendidas en train.</p>
+      <div class="formula">x estandarizado = (x − media de train) / desviación estándar de train<small>Una unidad transformada representa una desviación estándar de la variable original. Para una columna de varianza cero, StandardScaler evita dividir por cero.</small></div>
+      <p>Ejemplo ilustrativo: con media 40 y desviación 10, un valor 60 se transforma en 2. Esto facilita la optimización y hace comparables las penalizaciones de variables con escalas distintas. <strong>Estandarizar no convierte automáticamente una distribución en normal.</strong></p>
+      <h3>Ruta categórica: imputar y hacer one-hot</h3>
+      <p><code>strategy='most_frequent'</code> completa faltantes con la moda. <code>OneHotEncoder</code> convierte categorías en indicadores 0/1. Si las categorías fueran mensual, un año y dos años, se podrían crear dos indicadores dejando mensual como referencia.</p>
+      <ul>
+        <li><code>drop='first'</code>: omite una categoría por variable. Su efecto queda como referencia del intercepto y de las comparaciones.</li>
+        <li><code>handle_unknown='ignore'</code>: una categoría no vista al ajustar se representa con ceros en ese bloque. Con una categoría omitida, esa representación puede confundirse con la referencia.</li>
+        <li><code>sparse_output=False</code>: devuelve una matriz densa. Es una elección de representación en memoria.</li>
+      </ul>
+      <h3>Dos herramientas que organizan todo</h3>
+      <p><strong>ColumnTransformer</strong> aplica rutas distintas a grupos de columnas. <strong>Pipeline</strong> encadena la preparación y el modelo: al ajustar aprende ambos pasos; al predecir aplica la preparación aprendida y luego el modelo.</p>
+      <div class="flow"><b>Columnas numéricas → mediana → escalado</b><span>↘</span><b>Modelo</b></div>
+      <div class="flow"><b>Columnas categóricas → moda → one-hot</b><span>↗</span><b>Predicción</b></div>
+      <p><code>fit</code> aprende; <code>transform</code> aplica una transformación aprendida; <code>fit_transform</code> hace ambos sobre los datos usados para ajustar; <code>predict</code> produce respuestas. <strong>En test no se vuelve a ejecutar <code>fit</code>.</strong></p>
+      <div class="note">Al poner todo el Pipeline dentro de GridSearchCV, cada fold aprende sus propias medianas, escalas, categorías y coeficientes. Esto evita que su parte de validación influya en la preparación.</div>
+    </section>
+
+    <section id="lineal" data-study>
+      <div class="section-top"><span class="number">06</span><h2>Regresión lineal</h2></div>
+      <p>Modela la respuesta como una suma ponderada de las variables. Con una entrada se puede dibujar como una recta; con varias representa un plano o hiperplano.</p>
+      <div class="formula">ŷ = β₀ + β₁x₁ + β₂x₂ + … + βₚxₚ<small>ŷ: predicción · β₀: intercepto · βⱼ: coeficiente · xⱼ: predictor preparado · p: cantidad de predictores.</small></div>
+      <p><strong>Mínimos cuadrados:</strong> la regresión lineal ajusta los coeficientes para minimizar la suma de errores al cuadrado en entrenamiento. El <strong>residuo</strong> se define aquí como <code>real − predicho</code>: positivo significa subestimar; negativo, sobreestimar.</p>
+      <div class="cols">
+        <div class="card"><h3>Coeficiente numérico</h3><p>Indica cuánto cambia la predicción por una unidad del predictor, manteniendo constantes los demás. Como tus numéricas están estandarizadas, la unidad es <strong>una desviación estándar</strong>.</p></div>
+        <div class="card"><h3>Coeficiente categórico</h3><p>Compara esa categoría con la omitida como referencia, manteniendo los otros predictores constantes. Conserva las unidades del objetivo.</p></div>
+      </div>
+      <p>En tu lineal, <code>median_income</code> tiene un coeficiente ≈ USD 75.168: una desviación estándar más de ingreso se asocia con ese aumento en la predicción. <code>INLAND</code> tiene ≈ −USD 39.787 frente a <code>&lt;1H OCEAN</code>. Son asociaciones condicionales del modelo.</p>
+      <p><strong>Intercepto:</strong> es la predicción cuando las numéricas transformadas valen cero y las categóricas están en referencia. Cero tras el escalado corresponde a la media usada por el escalador; esa combinación puede no representar una zona real.</p>
+      <h3>Supuestos y límites que conviene entender</h3>
+      <p>La forma básica supone una relación aditiva y lineal en los coeficientes. Variables omitidas, interacciones y relaciones no lineales pueden producir patrones en los residuos. La <strong>multicolinealidad</strong> —predictores muy relacionados— puede volver inestables los coeficientes individuales.</p>
+      <p>La independencia y la varianza aproximadamente constante de errores importan para la evaluación y para la inferencia clásica. La normalidad de errores se usa en ciertos procedimientos inferenciales; no es un requisito para calcular predicciones con mínimos cuadrados. Este notebook evalúa predicción, no significancia estadística.</p>
+      <div class="note warn">Un coeficiente no demuestra causalidad ni importancia absoluta. Su interpretación depende de la escala, las otras variables y el modelo. Extrapolar fuera del rango observado puede generar resultados poco realistas.</div>
+    </section>
+
+    <section id="metricas-reg" data-study>
+      <div class="section-top"><span class="number">07</span><h2>Métricas de regresión: RMSE, MAE y R²</h2></div>
+      <div class="formula">MAE = (1/n) Σ |yᵢ − ŷᵢ|<br>MSE = (1/n) Σ (yᵢ − ŷᵢ)²<br>RMSE = √MSE<br>R² = 1 − [Σ (yᵢ − ŷᵢ)² / Σ (yᵢ − ȳ)²]<small>n: número de observaciones · Σ: sumar sobre todas ellas · ȳ: media real del conjunto evaluado. La fórmula de R² supone que el objetivo tiene variación.</small></div>
+      <div class="table-wrap"><table><thead><tr><th>Métrica</th><th>Qué cuenta</th><th>Cómo interpretarla</th></tr></thead><tbody>
+        <tr><td>MAE</td><td>Promedio de distancias absolutas entre realidad y predicción.</td><td>Misma unidad del objetivo. Menor es mejor; cero es perfecto.</td></tr>
+        <tr><td>RMSE</td><td>Raíz del promedio de errores cuadrados.</td><td>Misma unidad; da más peso a errores grandes. No es el error de cada caso.</td></tr>
+        <tr><td>MSE</td><td>Promedio de errores cuadrados.</td><td>Unidad al cuadrado; útil como pérdida de entrenamiento.</td></tr>
+        <tr><td>R²</td><td>Reducción del error cuadrático respecto de predecir la media del conjunto evaluado.</td><td>1 es perfecto; 0 equivale a esa referencia; puede ser negativo. No es accuracy.</td></tr>
+      </tbody></table></div>
+      <p><strong>Baseline:</strong> un modelo sencillo que fija una referencia mínima. <code>DummyRegressor()</code> predice siempre la media de <em>train</em>. En test su R² puede ser ligeramente negativo porque esa media no coincide exactamente con la media del test.</p>
+      <p>R² = 0,625 se suele describir como “explica aproximadamente 62,5 % de la variación observada en test”. No significa que acierte 62,5 % de los precios ni que cada predicción tenga 62,5 % de precisión.</p>
+      <div class="lab">
+        <h3>Laboratorio · Sentí la diferencia entre MAE y RMSE</h3>
+        <p class="small">Ejemplo didáctico en unidades genéricas. Escribí números separados por comas; usá punto para decimales. Cambiá una predicción por 300 y observá el peso del error grande.</p>
+        <div class="input-row"><label>Valores reales<input id="reg-real" type="text" value="100, 150, 200" spellcheck="false"></label><label>Predicciones<input id="reg-pred" type="text" value="90, 160, 180" spellcheck="false"></label></div>
+        <div class="stats" id="reg-stats" aria-live="polite"></div><p id="reg-error" class="error" role="status"></p>
+      </div>
+      <h3>Cómo leer los gráficos</h3>
+      <p><strong>Real vs. predicho:</strong> puntos cerca de la diagonal indican predicciones cercanas. <strong>Residuos vs. predicho:</strong> una nube alrededor de cero es deseable; curvas sugieren estructura no capturada y una forma de abanico sugiere variación del error con el nivel predicho. Estos gráficos orientan el diagnóstico, no prueban por sí solos todos los supuestos.</p>
+    </section>
+
+    <section id="regularizacion" data-study>
+      <div class="section-top"><span class="number">08</span><h2>Regularización, sobreajuste y subajuste</h2></div>
+      <div class="cols"><div class="card"><h3>Sobreajuste / overfitting</h3><p>El modelo captura detalles y ruido de train que no se sostienen fuera de él. Suele verse como error muy bajo en train y bastante mayor en validación o test.</p></div><div class="card"><h3>Subajuste / underfitting</h3><p>El modelo es demasiado restrictivo o las variables resultan insuficientes. Puede tener errores altos tanto en train como fuera de él. Una brecha pequeña no prueba que el modelo sea bueno.</p></div></div>
+      <p><strong>Sesgo y varianza:</strong> el sesgo refleja restricciones que pueden alejar la predicción de la relación real; la varianza refleja cuánto cambia el ajuste con otros datos de entrenamiento. La regularización suele estabilizar el ajuste a cambio de introducir sesgo.</p>
+      <p><strong>Regularizar</strong> es agregar una penalización que desalienta coeficientes grandes. Busca un equilibrio entre ajustar los datos y limitar la magnitud de los parámetros.</p>
+      <div class="formula">Ridge (L2): minimizar suma de errores² + α Σ βⱼ²<br>Lasso (L1): minimizar [suma de errores² / (2n)] + α Σ |βⱼ|<small>Formas de los objetivos de Ridge y Lasso en scikit-learn para este contexto. La suma penaliza los coeficientes, no el intercepto habitual. Por su normalización, un mismo α no tiene idéntico efecto entre ambos.</small></div>
+      <div class="table-wrap"><table><thead><tr><th>Modelo</th><th>Efecto</th><th>Parámetro</th></tr></thead><tbody>
+        <tr><td>Lineal</td><td>Sin penalización explícita sobre coeficientes.</td><td>No usa <code>alpha</code>.</td></tr>
+        <tr><td>Ridge</td><td>Contrae coeficientes; en general no los hace exactamente cero.</td><td>Mayor <code>alpha</code> → mayor penalización.</td></tr>
+        <tr><td>Lasso</td><td>Puede hacer algunos coeficientes exactamente cero.</td><td>Mayor <code>alpha</code> → mayor penalización.</td></tr>
+        <tr><td>Logística del notebook</td><td>Usa regularización L2 con su configuración predeterminada.</td><td>Menor <code>C</code> → mayor regularización.</td></tr>
+      </tbody></table></div>
+      <p>El escalado importa: si dos variables usan unidades muy diferentes, sus coeficientes necesitan magnitudes distintas. Penalizarlos sin considerar la escala dificulta una comparación equilibrada.</p>
+      <div class="note">Regularizar no garantiza mejorar. En tu ejecución, lineal, Ridge y Lasso quedan casi empatados. Una diferencia diminuta en una tabla no demuestra una mejora estable.</div>
+    </section>
+
+    <section id="cv" data-study>
+      <div class="section-top"><span class="number">09</span><h2>Validación cruzada y búsqueda de parámetros</h2></div>
+      <p>La <strong>validación cruzada (CV)</strong> divide train en partes o <em>folds</em>. Con cinco folds se entrena cinco veces: en cada vuelta se aprende con cuatro partes y se evalúa con la restante. Luego se promedian los puntajes.</p>
+      <div class="folds" aria-label="Cinco vueltas de validación cruzada. Cada fila deja un bloque diferente para validar.">
+        <span class="valid">Validar 1</span><span>Entrenar</span><span>Entrenar</span><span>Entrenar</span><span>Entrenar</span>
+        <span>Entrenar</span><span class="valid">Validar 2</span><span>Entrenar</span><span>Entrenar</span><span>Entrenar</span>
+        <span>Entrenar</span><span>Entrenar</span><span class="valid">Validar 3</span><span>Entrenar</span><span>Entrenar</span>
+        <span>Entrenar</span><span>Entrenar</span><span>Entrenar</span><span class="valid">Validar 4</span><span>Entrenar</span>
+        <span>Entrenar</span><span>Entrenar</span><span>Entrenar</span><span>Entrenar</span><span class="valid">Validar 5</span>
+      </div>
+      <p><code>KFold(5, shuffle=True, random_state=42)</code> mezcla y divide en Housing. <code>StratifiedKFold</code> preserva aproximadamente las proporciones de clase en cada fold de Churn. Los folds sirven para elegir dentro de train; no reemplazan el test reservado.</p>
+      <h3>Parámetros aprendidos vs. hiperparámetros elegidos</h3>
+      <p>Los <strong>parámetros</strong>, como coeficientes e intercepto, se aprenden en <code>fit</code>. Los <strong>hiperparámetros</strong>, como <code>alpha</code>, <code>C</code> o <code>class_weight</code>, configuran el aprendizaje y se comparan mediante validación.</p>
+      <p><code>GridSearchCV</code> prueba las combinaciones de una grilla y las ordena según <code>scoring</code>. La notación <code>modelo__alpha</code> accede al parámetro <code>alpha</code> del paso llamado <code>modelo</code> dentro del Pipeline.</p>
+      <div class="table-wrap"><table><thead><tr><th></th><th>Housing</th><th>Churn</th></tr></thead><tbody>
+        <tr><td>Alternativas</td><td>Media, lineal, Ridge α ∈ {1, 10, 100}, Lasso α ∈ {10, 100, 1000}.</td><td>Mayoría y logística con C ∈ {0,01; 1; 10}, con peso normal o balanceado.</td></tr>
+        <tr><td>Criterio</td><td>Menor RMSE medio de CV.</td><td>Mayor F1 medio de CV.</td></tr>
+        <tr><td>Cantidad</td><td>8 configuraciones × 5 folds = 40 ajustes de CV.</td><td>7 configuraciones × 5 folds = 35 ajustes de CV.</td></tr>
+      </tbody></table></div>
+      <p>Con <code>refit=True</code>, su valor predeterminado aquí, la búsqueda vuelve a ajustar la mejor configuración usando todo train después de la CV. Ese ajuste adicional produce <code>best_estimator_</code>.</p>
+      <div class="note"><strong>¿Por qué un RMSE negativo?</strong> scikit-learn ordena los scorers de mayor a menor. <code>neg_root_mean_squared_error</code> cambia el signo: −68.000 es mejor que −70.000. Tu tabla multiplica por −1 para mostrar errores positivos.</div>
+      <p><code>best_params_</code> contiene la configuración ganadora; <code>cv_results_</code>, los resultados de todas. Elegir el máximo entre muchas pruebas puede volver optimista el mejor puntaje de CV. Después de ver test, cambiar el modelo según ese resultado convierte test en otra fuente de selección.</p>
+    </section>
+
+    <section id="logistica" data-study>
+      <div class="section-top"><span class="number">10</span><h2>Regresión logística: de una suma a una probabilidad</h2></div>
+      <p>La logística combina linealmente los predictores y transforma el resultado con la <strong>sigmoide</strong>. Su salida se interpreta como una estimación de la probabilidad de la clase positiva.</p>
+      <div class="formula">z = β₀ + β₁x₁ + … + βₚxₚ<br>p = σ(z) = 1 / (1 + e<sup>−z</sup>)<br>odds = p / (1 − p) &nbsp; · &nbsp; log(odds) = z<small>z puede tomar cualquier valor real; la sigmoide lo lleva a un valor entre 0 y 1. La frontera con umbral 0,5 corresponde a z = 0.</small></div>
+      <p><strong>Umbral de decisión:</strong> separa las probabilidades en clases. El notebook mantiene el umbral predeterminado de 0,5. Bajar el umbral suele producir más alertas y aumentar o mantener el recall; también puede aumentar las falsas alertas. La precision no cambia de forma necesariamente monótona.</p>
+      <p><strong>Entrenamiento:</strong> la logística minimiza una pérdida logarítmica (log loss), junto con la penalización configurada. No minimiza directamente F1: F1 se usa para comparar las configuraciones en CV.</p>
+      <div class="lab">
+        <h3>Laboratorio · Sigmoide, probabilidad y odds</h3>
+        <label for="z-slider">Puntaje lineal z: <strong id="z-value">0</strong></label>
+        <input id="z-slider" type="range" min="-6" max="6" step="0.1" value="0">
+        <div class="bar" aria-hidden="true"><span id="p-bar" style="width:50%"></span></div>
+        <div class="stats" id="sigmoid-stats" aria-live="polite"></div>
+        <p class="small">Demostración matemática; no es una predicción de un cliente real ni un modelo reentrenado.</p>
+      </div>
+      <h3>Cómo interpretar sus coeficientes</h3>
+      <p>Un coeficiente positivo aumenta las <strong>log-odds</strong> de churn; uno negativo las reduce, manteniendo los demás predictores constantes. <code>exp(coeficiente)</code> es el <strong>odds ratio</strong>: el factor que multiplica las odds por una unidad del predictor.</p>
+      <p>Para numéricas escaladas, esa unidad es una desviación estándar. Para indicadores categóricos, la comparación es con la categoría de referencia. Un odds ratio de 0,55 significa odds 45 % menores, no 45 puntos porcentuales menos de probabilidad.</p>
+      <div class="note">Ejemplo: si p = 0,50, las odds son 1. Multiplicarlas por 0,55 da odds = 0,55 y p = 0,55 / 1,55 ≈ 0,355. La probabilidad pasa a 35,5 %, no a 27,5 %.</div>
+      <h3>Desbalance, pesos y calibración</h3>
+      <p><code>class_weight='balanced'</code> da más peso a errores de clases menos frecuentes, aproximadamente de forma inversa a su frecuencia. No agrega filas ni cambia por sí mismo la cantidad de clientes. Puede favorecer la detección de bajas, pero sus efectos se verifican con las métricas.</p>
+      <p><strong>Calibración:</strong> entre casos a los que se asigna una probabilidad cercana a 0,7, una buena calibración implicaría una frecuencia de positivos cercana al 70 %. Una buena clasificación no asegura probabilidades calibradas; la ponderación de clases puede afectar su interpretación.</p>
+    </section>
+
+    <section id="clasificacion" data-study>
+      <div class="section-top"><span class="number">11</span><h2>Matriz de confusión y métricas de clasificación</h2></div>
+      <p>En este ejercicio, <strong>positivo = churn = cliente que se fue</strong>. En la matriz del notebook, las filas son las clases reales y las columnas son las predichas.</p>
+      <div class="table-wrap"><table><thead><tr><th>Real ↓ / Predicho →</th><th>No se va (0)</th><th>Se va (1)</th></tr></thead><tbody><tr><th>No se va (0)</th><td><strong>TN:</strong> permanencia correctamente clasificada.</td><td><strong>FP:</strong> falsa alerta; el cliente no se fue.</td></tr><tr><th>Se va (1)</th><td><strong>FN:</strong> baja omitida; no se detectó.</td><td><strong>TP:</strong> baja correctamente detectada.</td></tr></tbody></table></div>
+      <div class="formula">Accuracy = (TP + TN) / (TP + TN + FP + FN)<br>Precision = TP / (TP + FP)<br>Recall = TP / (TP + FN)<br>F1 = 2 × Precision × Recall / (Precision + Recall)<br>&nbsp;&nbsp;&nbsp;&nbsp;= 2TP / (2TP + FP + FN)</div>
+      <ul>
+        <li><strong>Accuracy / exactitud:</strong> de todos los casos, ¿qué fracción acerté?</li>
+        <li><strong>Precision / valor predictivo positivo:</strong> de las alertas, ¿qué fracción correspondió a bajas reales?</li>
+        <li><strong>Recall / sensibilidad:</strong> de las bajas reales, ¿qué fracción detecté?</li>
+        <li><strong>F1:</strong> media armónica de precision y recall. Penaliza que una de ellas sea baja; no incluye directamente los TN ni los costos económicos.</li>
+      </ul>
+      <p>Un <code>DummyClassifier(strategy='most_frequent')</code> predice siempre “No”. Logra ≈ 73,5 % de accuracy, pero su recall es cero. Como no genera alertas, su precision tiene denominador cero; el notebook usa <code>zero_division=0</code> para reportarla como cero.</p>
+      <div class="lab">
+        <h3>Laboratorio · Recalculá tu matriz</h3>
+        <p class="small">Los valores iniciales corresponden al test guardado del notebook. Podés modificarlos para experimentar; esto no cambia ni ejecuta el modelo.</p>
+        <div class="input-row"><label>TN · aciertos “No”<input id="tn" type="number" min="0" step="1" value="749"></label><label>FP · falsas alertas<input id="fp" type="number" min="0" step="1" value="286"></label><label>FN · bajas omitidas<input id="fn" type="number" min="0" step="1" value="83"></label><label>TP · bajas detectadas<input id="tp" type="number" min="0" step="1" value="291"></label></div>
+        <div class="stats" id="classification-stats" aria-live="polite"></div><p id="classification-detail" class="small" role="status"></p>
+        <button id="matrix-reset" class="button" type="button">Restaurar datos del notebook</button>
+      </div>
+      <p><strong>Elegir una métrica depende del problema:</strong> si perder una baja es costoso, el recall merece atención; si una alerta dispara una acción cara, la precision importa. F1 resume un equilibrio, pero no decide la rentabilidad. Cualquier ajuste del umbral se selecciona con validación dentro de train.</p>
+    </section>
+
+    <section id="resultados" data-study>
+      <div class="section-top"><span class="number">12</span><h2>Aprender a leer tus resultados reales</h2></div>
+      <p class="small">Cifras de los resultados ya guardados en tu notebook al crear esta guía. No se reentrenaron los modelos. Pueden cambiar en otra ejecución o con otros datos.</p>
+      <h3>Housing: mejora clara frente a la media</h3>
+      <div class="table-wrap"><table><thead><tr><th>Modelo</th><th>RMSE CV</th><th>RMSE test</th><th>MAE test</th><th>R² test</th></tr></thead><tbody>
+        <tr><td>Media</td><td>115.617</td><td>114.486</td><td>90.607</td><td>≈ 0</td></tr>
+        <tr><td>Lineal</td><td>68.604</td><td>70.059</td><td>50.670</td><td>0,625</td></tr>
+        <tr><td><strong>Ridge · elegido por CV</strong></td><td><strong>68.595</strong></td><td>70.067</td><td>50.678</td><td>0,625</td></tr>
+        <tr><td>Lasso</td><td>68.600</td><td>70.071</td><td>50.680</td><td>0,625</td></tr>
+      </tbody></table></div>
+      <p>Errores expresados en USD de 1990 y redondeados al entero. Ridge reduce el RMSE de test de la media aproximadamente <strong>38,8 %</strong>: <code>100 × (1 − RMSE_modelo / RMSE_baseline)</code>.</p>
+      <p>El RMSE de Ridge pasa de ≈ 68.435 en train a ≈ 70.067 en test. La brecha es pequeña en esta división; no muestra una señal fuerte de sobreajuste. El MAE indica una separación media absoluta de ≈ USD 50.678. Eso sigue siendo un error importante.</p>
+      <div class="note warn">La lineal tiene un RMSE de test un poco menor, pero se conserva Ridge porque ganó en CV. Cambiar al ganador después de mirar test usaría ese conjunto para seleccionar. La ventaja de Ridge en CV es demasiado pequeña para afirmar superioridad estable.</div>
+      <h3>Churn: la accuracy oculta casi todo el cambio útil</h3>
+      <div class="table-wrap"><table><thead><tr><th>Modelo</th><th>Accuracy</th><th>Precision</th><th>Recall</th><th>F1</th></tr></thead><tbody><tr><td>Mayoría</td><td>73,46 %</td><td>0 %*</td><td>0 %</td><td>0</td></tr><tr><td>Logística seleccionada</td><td>73,81 %</td><td>50,43 %</td><td>77,81 %</td><td>0,612</td></tr></tbody></table></div>
+      <p class="small">* Reportado como cero mediante zero_division=0: el baseline no genera alertas.</p>
+      <p>La configuración elegida fue <code>C=0.01</code> y <code>class_weight='balanced'</code>. Identifica <strong>291 de 374 bajas</strong>, omite <strong>83</strong> y produce <strong>286 falsas alertas</strong>. De 577 alertas, aproximadamente una de cada dos es correcta.</p>
+      <p>El contrato de dos años tiene odds ratio ≈ 0,55 frente al mensual; una desviación estándar adicional de antigüedad tiene odds ratio ≈ 0,51. Son asociaciones condicionadas por las otras variables, no pruebas de que una intervención evite bajas.</p>
+      <h3>Qué no se puede concluir</h3>
+      <ul><li>No son tasaciones precisas de casas individuales ni valores monetarios actuales.</li><li>La división aleatoria no demuestra generalización a otras regiones o épocas.</li><li>Churn es una clasificación retrospectiva. Sin fechas de disponibilidad de predictores, no se demuestra anticipación futura.</li><li>Detectar una baja no demuestra que una campaña consiga retener a ese cliente.</li><li>No se compara un RMSE de 70.067 con un F1 de 0,612 para elegir la “mejor misión”: miden cosas diferentes.</li></ul>
+    </section>
+
+    <section id="codigo" data-study>
+      <div class="section-top"><span class="number">13</span><h2>Leer el código sin memorizarlo a ciegas</h2></div>
+      <p>Estudiá qué problema resuelve cada instrucción. Estos fragmentos son explicativos y no sustituyen las celdas completas.</p>
+      <pre><code><span class="comment"># 1. Separar la respuesta de las entradas.</span>
+Xh, yh = housing.drop(columns='median_house_value'), housing.median_house_value
+
+<span class="comment"># 2. Reservar datos que no participan en el aprendizaje.</span>
+Xh_train, Xh_test, yh_train, yh_test = train_test_split(
+    Xh, yh, test_size=.2, random_state=42
+)
+
+<span class="comment"># 3. La preparación forma parte del modelo evaluado.</span>
+pipeline(Xh_train, LinearRegression())
+
+<span class="comment"># 4. Predecir con el ajuste elegido sin reaprender en test.</span>
+pred_h = modelos_h[ganador_h].predict(Xh_test)
+
+<span class="comment"># 5. Comparar predicción y realidad en las mismas filas.</span>
+root_mean_squared_error(yh_test, pred_h)</code></pre>
+      <div class="table-wrap"><table><thead><tr><th>Herramienta o expresión</th><th>Qué debés saber explicar</th></tr></thead><tbody>
+        <tr><td><code>Path</code> y <code>ROOT</code></td><td>Localizan los CSV desde el directorio actual o uno de sus padres.</td></tr>
+        <tr><td><code>read_csv</code>, <code>head</code>, <code>shape</code></td><td>Cargar datos, mirar ejemplos y consultar dimensiones.</td></tr>
+        <tr><td><code>isna().sum()</code>, <code>duplicated().sum()</code></td><td>Contar faltantes por columna y filas repetidas.</td></tr>
+        <tr><td><code>assert</code>, <code>is_unique</code></td><td>Comprobar condiciones esperadas; detener la ejecución si no se cumplen.</td></tr>
+        <tr><td><code>select_dtypes</code>, <code>columns.difference</code></td><td>Separar las numéricas del resto para aplicar preparaciones distintas.</td></tr>
+        <tr><td><code>drop</code>, <code>map</code>, <code>to_numeric</code></td><td>Excluir columnas, recodificar el objetivo y convertir tipos.</td></tr>
+        <tr><td><code>clone</code>, <code>set_params</code></td><td>Crear una copia sin el estado ajustado y configurar sus hiperparámetros antes de entrenar.</td></tr>
+        <tr><td><code>groupby</code>, <code>idxmin</code></td><td>Encontrar la configuración de menor RMSE para cada familia.</td></tr>
+        <tr><td><code>coef_</code>, <code>get_feature_names_out</code></td><td>Vincular coeficientes aprendidos con las columnas que salen de la preparación.</td></tr>
+        <tr><td><code>ravel()</code></td><td>Aplanar la matriz 2 × 2 en orden TN, FP, FN, TP cuando las clases están ordenadas 0, 1.</td></tr>
+        <tr><td><code>np.exp(coef)</code></td><td>Convertir coeficientes de log-odds en odds ratios.</td></tr>
+        <tr><td><code>max_iter</code>, <code>ConvergenceWarning</code></td><td>Límite de iteraciones y aviso de que el algoritmo no convergió. Aumentar iteraciones no garantiza mejor generalización.</td></tr>
+        <tr><td><code>error_score='raise'</code></td><td>Hacer visibles los errores de ajuste en la búsqueda; aquí los avisos de convergencia también se convierten en errores.</td></tr>
+      </tbody></table></div>
+      <p><strong>Bibliotecas:</strong> pandas organiza las tablas; NumPy aporta operaciones numéricas; Matplotlib dibuja gráficos; scikit-learn prepara, entrena y evalúa; IPython presenta tablas y texto en el notebook. El entorno virtual y el kernel correcto permiten usar las dependencias de <code>requirements.txt</code>.</p>
+    </section>
+
+    <section id="defensa" data-study>
+      <div class="section-top"><span class="number">14</span><h2>Cómo explicarlo y defender tus decisiones</h2></div>
+      <p class="lead">Una conclusión completa conecta <strong>problema → método → evidencia → utilidad → límites</strong>.</p>
+      <details><summary>¿Por qué no entrenaste y evaluaste con todos los datos?</summary><p>Porque medir sobre los mismos ejemplos usados para aprender puede exagerar el rendimiento. Separé test y elegí las configuraciones con CV dentro de train.</p></details>
+      <details><summary>¿Por qué usaste un baseline?</summary><p>Para comprobar que el modelo aprende algo útil frente a una regla simple. En Housing la referencia es la media; en Churn es la clase mayoritaria.</p></details>
+      <details><summary>¿Por qué preparaste los datos dentro del Pipeline?</summary><p>Para que medianas, escalas y categorías se aprendan solo de los datos de entrenamiento correspondientes a cada ajuste y fold, evitando fuga desde validación o test.</p></details>
+      <details><summary>¿Por qué RMSE para Housing y F1 para Churn?</summary><p>RMSE expresa el error en unidades del precio y penaliza más los errores grandes. F1 combina precision y recall en un problema desbalanceado. Acompaño esas cifras con MAE, R² y la matriz de confusión para entender lo que el resumen omite.</p></details>
+      <details><summary>¿Por qué no alcanza la accuracy?</summary><p>Porque predecir que nadie se va ya acierta aproximadamente el 73,5 %. Ese modelo no encuentra ninguna baja. El valor de la logística aparece en detectar 291 de 374 bajas, junto con el costo de 286 falsas alertas.</p></details>
+      <details><summary>¿Qué aprendiste de Ridge y Lasso?</summary><p>Que controlar los coeficientes puede ayudar a generalizar, pero en esta ejecución sus resultados son casi iguales a los de la lineal. Mantengo Ridge por el criterio de selección establecido en CV, sin afirmar una ventaja importante.</p></details>
+      <details><summary>¿Qué mejorarías después?</summary><p>En Housing, probaría variables derivadas como habitaciones por hogar y validación por zonas. En Churn, definiría el costo de omitir bajas y de generar alertas, y evaluaría umbrales y calibración dentro de train. Si estas decisiones nacen de mirar el test actual, necesitaría otro conjunto independiente para la evaluación final de la nueva versión.</p></details>
+      <div class="note"><strong>Una respuesta modelo:</strong> “Mi regresión supera claramente a predecir la media, pero su MAE ronda USD 50.700 de 1990 por zona censal. Mi clasificación detecta cerca del 78 % de las bajas y aproximadamente la mitad de sus alertas es correcta. Su utilidad depende del costo de actuar y de las bajas omitidas. Estos resultados se limitan a esta división y a estos datos”.</div>
+      <h3>Errores que tenés que poder evitar</h3>
+      <ul><li>Decir que R² es el porcentaje de predicciones correctas.</li><li>Llamar “error absoluto promedio” al RMSE.</li><li>Interpretar un coeficiente escalado como efecto por una unidad original.</li><li>Confundir precision (denominador: alertas) con recall (denominador: bajas reales).</li><li>Afirmar que un odds ratio es un cambio idéntico en probabilidad.</li><li>Usar la correlación o los coeficientes como prueba causal.</li><li>Ajustar de nuevo el escalador en test o cambiar hiperparámetros mirando sus resultados.</li></ul>
+    </section>
+
+    <section id="repaso">
+      <div class="section-top"><span class="number">15</span><h2>Autoevaluación: ¿lo podés explicar?</h2></div>
+      <p>Respondé sin volver al texto y corregí al terminar. Las explicaciones sirven para detectar qué conceptos repasar. El cuestionario se corrige en este archivo, sin enviar respuestas.</p>
+      <form id="quiz"><div id="quiz-questions"></div><div class="actions quiz-controls"><button class="button primary" type="submit">Corregir mis respuestas</button><button class="button" type="reset">Volver a intentar</button></div><p id="quiz-result" role="status" aria-live="polite"></p></form>
+      <noscript><p>El cuestionario y los laboratorios necesitan JavaScript. Podés estudiar todo el contenido teórico sin activarlo.</p></noscript>
+    </section>
+
+    <section id="fuentes">
+      <div class="section-top"><span class="number">16</span><h2>Hoja rápida para el último repaso</h2></div>
+      <div class="table-wrap"><table><thead><tr><th>Si te preguntan…</th><th>Recordá…</th></tr></thead><tbody>
+        <tr><td>¿Qué hace el modelo?</td><td>Aprende X → y y se evalúa en observaciones reservadas.</td></tr>
+        <tr><td>¿Dónde se aprende la preparación?</td><td>Dentro de train y dentro de cada fold, mediante el Pipeline.</td></tr>
+        <tr><td>¿Menor o mayor?</td><td>MAE / RMSE: menor. R² / F1 / precision / recall: mayor para la dimensión que miden, considerando el contexto.</td></tr>
+        <tr><td>¿Alpha y C?</td><td>Mayor alpha → más penalización. Menor C → más regularización.</td></tr>
+        <tr><td>¿Qué significa un coeficiente?</td><td>Una asociación condicional: precio en la lineal, log-odds en la logística.</td></tr>
+        <tr><td>¿Precision y recall?</td><td>Precision: TP / alertas. Recall: TP / bajas reales.</td></tr>
+        <tr><td>¿Qué predice el baseline?</td><td>Housing: media de train. Churn: clase mayoritaria.</td></tr>
+        <tr><td>¿Qué eligió el notebook?</td><td>Housing: Ridge por RMSE CV. Churn: logística balanceada con C = 0,01 por F1 CV.</td></tr>
+        <tr><td>¿Qué límite no olvidás?</td><td>Resultados históricos y retrospectivos; no prueban causalidad ni validez futura.</td></tr>
+      </tbody></table></div>
+      <h3>Una ruta práctica de estudio</h3>
+      <ol><li><strong>Primera vuelta:</strong> leé las secciones 1–5 y explicá cómo evitás la fuga de información.</li><li><strong>Segunda vuelta:</strong> estudiá 6–9, calculá un MAE y un RMSE a mano, y describí cinco folds.</li><li><strong>Tercera vuelta:</strong> estudiá 10–11 y reconstruí precision y recall a partir de la matriz.</li><li><strong>Última vuelta:</strong> defendé los resultados de 12–14 en voz alta y resolvé el cuestionario.</li></ol>
+      <h3>Material del proyecto</h3>
+      <p>El alcance, los datos y los resultados de esta guía salen de <a href="C2_The_hatch.md">C2_The_hatch.md</a>, <a href="notebooks/challenge.ipynb">notebooks/challenge.ipynb</a> y los CSV locales. Los ejemplos de los laboratorios se identifican como didácticos cuando no corresponden a resultados del notebook.</p>
+      <h3>Para profundizar en la documentación oficial</h3>
+      <p class="small">Referencias de scikit-learn 1.6, la versión indicada por el proyecto. Estos enlaces requieren conexión; el resto de la guía funciona sin internet.</p>
+      <ul><li><a href="https://scikit-learn.org/1.6/modules/linear_model.html">Modelos lineales, Ridge, Lasso y regresión logística</a></li><li><a href="https://scikit-learn.org/1.6/modules/model_evaluation.html">Métricas de evaluación</a></li><li><a href="https://scikit-learn.org/1.6/modules/cross_validation.html">Validación cruzada</a></li><li><a href="https://scikit-learn.org/1.6/common_pitfalls.html">Errores frecuentes y fuga de información</a></li><li><a href="https://scikit-learn.org/1.6/modules/preprocessing.html">Preparación y escalado</a></li></ul>
+    </section>
+    <footer>The Hatch C2 · Guía personal de estudio · 28 de octubre de 2026.<br>Tu progreso se guarda en este navegador si permite almacenamiento local. No se recopilan ni se envían datos.</footer>
+  </main>
+
+  <script>
+    'use strict';
+    const $ = (id) => document.getElementById(id);
+    const number = (value, digits = 2) => new Intl.NumberFormat('es-PY', { maximumFractionDigits: digits, minimumFractionDigits: digits }).format(value);
+    const stat = (label, value) => `<div class="stat"><b>${value}</b><span>${label}</span></div>`;
+    const storageKey = 'the-hatch-c2-study-v1';
+
+    // Cada tema puede marcarse como comprendido; el archivo no necesita servidor.
+    let saved = [];
+    try { const value = JSON.parse(localStorage.getItem(storageKey) || '[]'); if (Array.isArray(value)) saved = value; } catch (_) { /* El progreso sigue disponible durante esta sesión. */ }
+    const studySections = [...document.querySelectorAll('[data-study]')];
+    function updateProgress() {
+      const checked = [...document.querySelectorAll('.study-check:checked')].map((input) => input.value);
+      $('progress').value = checked.length;
+      $('progress-text').textContent = `${checked.length} de ${studySections.length} temas comprendidos`;
+      try { localStorage.setItem(storageKey, JSON.stringify(checked)); } catch (_) { /* Algunos navegadores restringen el almacenamiento de archivos locales. */ }
+    }
+    studySections.forEach((section) => {
+      const label = document.createElement('label');
+      label.className = 'done';
+      const input = document.createElement('input');
+      input.type = 'checkbox'; input.className = 'study-check'; input.value = section.id; input.checked = saved.includes(section.id);
+      input.addEventListener('change', updateProgress);
+      label.append(input, document.createTextNode('Lo entiendo y puedo explicarlo con mis palabras'));
+      section.append(label);
+    });
+    $('progress').max = studySections.length;
+    updateProgress();
+
+    // La impresión también incluye las respuestas explicativas de los desplegables.
+    let previouslyOpen = [];
+    window.addEventListener('beforeprint', () => {
+      previouslyOpen = [...document.querySelectorAll('details')].map((item) => item.open);
+      document.querySelectorAll('details').forEach((item) => { item.open = true; });
+    });
+    window.addEventListener('afterprint', () => document.querySelectorAll('details').forEach((item, i) => { item.open = previouslyOpen[i]; }));
+    $('print').addEventListener('click', () => window.print());
+
+    // Calculadora de regresión: no ejecuta ni modifica el notebook.
+    function readNumbers(id) {
+      const tokens = $(id).value.split(',').map((value) => value.trim());
+      if (tokens.some((value) => value === '')) throw new Error('Completá todos los números de ambas listas.');
+      const values = tokens.map(Number);
+      if (values.some((value) => !Number.isFinite(value))) throw new Error('Usá solo números finitos, separados por comas, con punto decimal.');
+      return values;
+    }
+    function regressionMetrics() {
+      try {
+        const real = readNumbers('reg-real'); const pred = readNumbers('reg-pred');
+        if (real.length !== pred.length || real.length < 2) throw new Error('Las listas deben tener la misma longitud y al menos dos valores.');
+        const n = real.length; const mean = real.reduce((sum, value) => sum + value, 0) / n;
+        const sse = real.reduce((sum, value, i) => sum + (value - pred[i]) ** 2, 0);
+        const mae = real.reduce((sum, value, i) => sum + Math.abs(value - pred[i]), 0) / n;
+        const sst = real.reduce((sum, value) => sum + (value - mean) ** 2, 0);
+        if (![sse, mae, sst].every(Number.isFinite)) throw new Error('Los números son demasiado grandes para esta calculadora.');
+        const r2 = sst === 0 ? 'No definido' : number(1 - sse / sst, 3);
+        $('reg-stats').innerHTML = stat('MAE', number(mae)) + stat('MSE', number(sse / n)) + stat('RMSE', number(Math.sqrt(sse / n))) + stat('R²', r2);
+        $('reg-error').textContent = sst === 0 ? 'El objetivo es constante: aquí R² se muestra como no definido por su denominador cero.' : '';
+      } catch (error) { $('reg-stats').replaceChildren(); $('reg-error').textContent = error.message; }
+    }
+    ['reg-real', 'reg-pred'].forEach((id) => $(id).addEventListener('input', regressionMetrics));
+    regressionMetrics();
+
+    // Transformación matemática del puntaje z a probabilidad y odds.
+    function sigmoid() {
+      const z = Number($('z-slider').value); const p = 1 / (1 + Math.exp(-z));
+      $('z-value').textContent = number(z, 1);
+      $('p-bar').style.width = `${p * 100}%`;
+      $('sigmoid-stats').innerHTML = stat('Probabilidad p', `${number(p * 100, 1)} %`) + stat('Odds p / (1 − p)', number(p / (1 - p))) + stat('Log-odds', number(z, 1)) + stat('1 − p', `${number((1 - p) * 100, 1)} %`);
+    }
+    $('z-slider').addEventListener('input', sigmoid);
+    sigmoid();
+
+    // Los denominadores cero se muestran de forma explícita.
+    function classificationMetrics() {
+      const ids = ['tn', 'fp', 'fn', 'tp'];
+      const values = ids.map((id) => $(id).value.trim() === '' ? NaN : Number($(id).value));
+      if (values.some((value) => !Number.isSafeInteger(value) || value < 0) || !Number.isSafeInteger(values.reduce((a, b) => a + b, 0))) {
+        $('classification-stats').replaceChildren(); $('classification-detail').textContent = 'Ingresá cuatro conteos enteros no negativos de tamaño válido.'; return;
+      }
+      const [tn, fp, fn, tp] = values; const total = tn + fp + fn + tp;
+      const ratio = (numerator, denominator) => denominator ? `${number(100 * numerator / denominator)} %` : 'No definida';
+      const f1Den = 2 * tp + fp + fn;
+      $('classification-stats').innerHTML = stat('Accuracy', ratio(tp + tn, total)) + stat('Precision', ratio(tp, tp + fp)) + stat('Recall', ratio(tp, tp + fn)) + stat('F1', f1Den ? number(2 * tp / f1Den, 3) : 'No definido');
+      $('classification-detail').textContent = `${total} clientes · ${tp + fp} alertas · ${tp + fn} bajas reales. Los denominadores cero se muestran como no definidos; el notebook puede reportar cero según zero_division.`;
+    }
+    ['tn', 'fp', 'fn', 'tp'].forEach((id) => $(id).addEventListener('input', classificationMetrics));
+    $('matrix-reset').addEventListener('click', () => { Object.entries({ tn: 749, fp: 286, fn: 83, tp: 291 }).forEach(([id, value]) => { $(id).value = value; }); classificationMetrics(); });
+    classificationMetrics();
+
+    const questions = [
+      { q: 'En Housing, ¿qué representa una fila?', a: ['Una vivienda individual con su precio de venta actual.', 'Una zona censal con variables agregadas.', 'Un cliente con un contrato inmobiliario.'], correct: 1, why: 'El objetivo es el valor mediano de viviendas de una zona censal, expresado en USD de 1990.' },
+      { q: '¿Dónde se ajustan el imputador y el escalador durante la CV?', a: ['En todos los datos antes de separar.', 'En el test para adaptarse a sus valores.', 'En la parte de entrenamiento de cada fold.'], correct: 2, why: 'El Pipeline se ajusta dentro de cada fold y evita que la validación influya en la preparación.' },
+      { q: 'Un RMSE de USD 70.067 significa que…', a: ['La raíz del promedio de errores cuadrados es USD 70.067.', 'Todas las predicciones se equivocan exactamente USD 70.067.', 'El promedio de errores absolutos necesariamente es USD 70.067.'], correct: 0, why: 'RMSE penaliza más los errores grandes. El error absoluto medio se mide con MAE.' },
+      { q: 'Un R² de 0,625 indica…', a: ['Que el 62,5 % de los precios son exactamente correctos.', 'Que el precio aumentará un 62,5 %.', 'Una reducción del 62,5 % del error cuadrático frente a predecir la media del conjunto evaluado.'], correct: 2, why: 'R² compara sumas de cuadrados. No equivale a accuracy y puede ser negativo.' },
+      { q: '¿Qué cambio aumenta la regularización?', a: ['Disminuir alpha en Ridge y aumentar C en logística.', 'Aumentar alpha en Ridge y disminuir C en logística.', 'Aumentar max_iter en cualquier modelo.'], correct: 1, why: 'Alpha controla directamente la penalización; C es inverso a su fuerza en la logística.' },
+      { q: 'La lineal gana por poco en test, pero Ridge ganó en CV. ¿Qué corresponde?', a: ['Conservar Ridge según el criterio de selección fijado en train.', 'Cambiar a la lineal y repetir test hasta lograr una mejora.', 'Elegir el modelo con los coeficientes más grandes.'], correct: 0, why: 'Cambiar la selección mirando test lo convertiría en parte del proceso de ajuste.' },
+      { q: 'Con TP = 291 y FP = 286, ¿qué mide 291 / 577?', a: ['Recall.', 'Precision.', 'Accuracy.'], correct: 1, why: '577 son las alertas: TP + FP. Precision responde cuántas alertas fueron verdaderas bajas.' },
+      { q: 'El baseline tiene 73,5 % de accuracy y recall cero. ¿Cómo es posible?', a: ['Es matemáticamente imposible.', 'Detecta todas las bajas pero se equivoca con las permanencias.', 'Predice siempre la clase mayoritaria: nadie se va.'], correct: 2, why: 'Acierta las permanencias, que son mayoría, y omite todas las bajas.' },
+      { q: 'Un coeficiente numérico de la lineal, después de StandardScaler, se interpreta por…', a: ['Una desviación estándar adicional, manteniendo los demás predictores constantes.', 'Un dólar adicional de cualquier variable.', 'Un cambio causal demostrado en el objetivo.'], correct: 0, why: 'La escala transformada usa desviaciones estándar. El coeficiente describe una asociación condicional.' },
+      { q: 'Un odds ratio de 0,55 para contrato de dos años significa…', a: ['Que la probabilidad baja exactamente 45 puntos porcentuales.', 'Que las odds son 0,55 veces las de la categoría de referencia, a iguales otros predictores.', 'Que el 55 % de todos los clientes se irá.'], correct: 1, why: 'Odds y probabilidades son diferentes: p = odds / (1 + odds). Tampoco es una conclusión causal.' },
+      { q: 'Si bajás el umbral para alertar churn, manteniendo los mismos puntajes…', a: ['No puede aumentar el número de alertas.', 'La precision aumenta obligatoriamente.', 'Se predicen más o iguales positivos y el recall puede aumentar o mantenerse.'], correct: 2, why: 'Pueden aparecer nuevas detecciones y nuevas falsas alertas. Precision no tiene una dirección garantizada.' },
+      { q: '¿Qué afirmación es adecuada al concluir?', a: ['La logística detecta muchas bajas, pero su utilidad depende de falsas alertas, costos y validación.', 'Un F1 de 0,612 demuestra que la campaña será rentable.', 'La validación aleatoria garantiza rendimiento futuro en cualquier población.'], correct: 0, why: 'Las métricas describen esta evaluación. No demuestran rentabilidad, causalidad ni validez universal.' },
+    ];
+    questions.forEach((item, index) => {
+      const fieldset = document.createElement('fieldset'); fieldset.className = 'quiz-question';
+      const legend = document.createElement('legend'); legend.textContent = `${index + 1}. ${item.q}`; fieldset.append(legend);
+      const options = document.createElement('div'); options.className = 'options';
+      item.a.forEach((answer, option) => {
+        const label = document.createElement('label'); label.className = 'option';
+        const input = document.createElement('input'); input.type = 'radio'; input.name = `q${index}`; input.value = option;
+        label.append(input, document.createTextNode(answer)); options.append(label);
+      });
+      const feedback = document.createElement('p'); feedback.className = 'feedback'; feedback.id = `feedback-${index}`; feedback.hidden = true;
+      fieldset.append(options, feedback); $('quiz-questions').append(fieldset);
+    });
+    $('quiz').addEventListener('submit', (event) => {
+      event.preventDefault(); let score = 0; let answered = 0;
+      questions.forEach((item, index) => {
+        const selected = document.querySelector(`input[name="q${index}"]:checked`);
+        const correct = Boolean(selected && Number(selected.value) === item.correct);
+        if (selected) answered++; if (correct) score++;
+        const feedback = $(`feedback-${index}`); feedback.hidden = false; feedback.className = `feedback ${correct ? 'good' : 'bad'}`;
+        feedback.textContent = `${correct ? 'Correcto.' : selected ? 'Para repasar.' : 'Sin responder.'} ${item.why}`;
+      });
+      $('quiz-result').textContent = `${score} de ${questions.length} correctas · ${answered} respondidas. ${score === questions.length ? 'Ahora practicá explicarlo en voz alta.' : 'Repasá las explicaciones y volvé a intentarlo.'}`;
+    });
+    $('quiz').addEventListener('reset', () => { document.querySelectorAll('.feedback').forEach((item) => { item.hidden = true; }); $('quiz-result').textContent = ''; });
+    $('quiz').addEventListener('change', (event) => {
+      if (event.target.name && event.target.name.startsWith('q')) { $(`feedback-${event.target.name.slice(1)}`).hidden = true; $('quiz-result').textContent = 'Respuestas modificadas. Volvé a corregir para actualizar el resultado.'; }
+    });
+
+    // El índice acompaña la sección visible sin afectar la navegación por teclado.
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) document.querySelectorAll('nav a').forEach((link) => {
+            const active = link.getAttribute('href') === `#${entry.target.id}`;
+            link.classList.toggle('active', active);
+            if (active) link.setAttribute('aria-current', 'location'); else link.removeAttribute('aria-current');
+          });
+        });
+      }, { rootMargin: '-8% 0px -72% 0px', threshold: 0 });
+      document.querySelectorAll('main section').forEach((section) => observer.observe(section));
+    }
+  </script>
+</body>
+</html>
