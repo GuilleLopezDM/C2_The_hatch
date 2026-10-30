@@ -7,15 +7,19 @@ data/
   housing.csv
   WA_Fn-UseC_-Telco-Customer-Churn.csv
 notebooks/
-  challenge_supervisado.ipynb
+  housing.ipynb
+  churn.ipynb
 C2_The_hatch.md
 requirements.txt
 README.md
 ```
 
-El notebook contiene el análisis, los gráficos y las conclusiones ejecutadas.
+Cada notebook contiene su análisis, gráficos y conclusiones, y puede ejecutarse
+de forma independiente. `housing.ipynb` resuelve regresión y `churn.ipynb`
+clasificación. Se conservaron los resultados de la ejecución original.
+El notebook combinado `notebooks/challenge.ipynb` se conserva como respaldo.
 El enunciado está en `C2_The_hatch.md`; las fuentes de los datasets están citadas
-dentro del notebook. No hace falta descargar ni generar archivos adicionales.
+dentro de cada notebook. No hace falta descargar ni generar archivos adicionales.
 
 ## Ejecutar en VS Code
 
@@ -26,7 +30,7 @@ python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 ```
 
-Si ya existe `.venv`, usá ese entorno. Abrí el notebook, seleccioná el kernel
+Si ya existe `.venv`, usá ese entorno. Abrí cada notebook, seleccioná el kernel
 `.venv\Scripts\python.exe` y ejecutá **Run All**.
 
 Para entregar, copiá únicamente los archivos y carpetas del esquema anterior.
